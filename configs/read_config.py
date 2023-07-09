@@ -4,7 +4,7 @@ import os
 
 def read_config():
 
-    global shipping_xlsx, update_plan_col_df, pf_col_df, mars_booking_default_df, mars_invoice_default_df\
+    global shipping_xlsx, update_plan_col_df, pf_col_df, booking_default_df, invoice_default_df\
         , LSP_Shipping_DB, LSP_Shipping_DB_conn_str
 
     #   Read JSON configs file
@@ -19,9 +19,9 @@ def read_config():
     update_plan_col_df = pd.DataFrame(config['shipping_xlsx_Column']['update_plan_col_df'])
     pf_col_df = pd.DataFrame(config['shipping_xlsx_Column']['pf_col_df'])
 
-    # Dataframe paring default value of each filed for MARS customer
-    mars_booking_default_df = pd.DataFrame(config['shipping_xlsx_MarsDefault']['mars_booking_default_df'])
-    mars_invoice_default_df = pd.DataFrame(config['shipping_xlsx_MarsDefault']['mars_invoice_default_df'])
+    # Dataframe paring default value of each filed for customer
+    booking_default_df = pd.DataFrame(config['shipping_xlsx_MarsDefault']['mars_booking_default_df'])
+    invoice_default_df = pd.DataFrame(config['shipping_xlsx_MarsDefault']['mars_invoice_default_df'])
 
     ## Call configs of a SQL database
     LSP_Shipping_DB = config['LSP_Shipping_SqlDb']
