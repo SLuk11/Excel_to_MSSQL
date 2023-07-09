@@ -58,12 +58,12 @@
     }
   },
 
-  "shipping_xlsx_MarsDefault": {
-    "mars_booking_default_df": {
+  "shipping_xlsx_Default": {
+    "booking_default_df": {
       "sql_col_name": ["shipment_type", "transportation_mode", "customer_code", "taxno", "dept_country"],
       "default_value": ["EX", "S", "code", "00000000", "TH"]
     },
-    "mars_invoice_default_df": {
+    "invoice_default_df": {
       "sql_col_name": ["seller_code", "seller_name", "taxno", "branch_no", "term_of_payment", "origin_country"],
       "default_value": ["code", "name", "0000000", "0001", "0", "TH"]
     }
