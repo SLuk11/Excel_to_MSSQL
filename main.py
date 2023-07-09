@@ -55,7 +55,7 @@ if __name__ == '__main__':
                         result = controllers.write2sql(config.LSP_Shipping_DB_conn_str, sheet[1]['to_table']
                                                        , df_clean, eval('config.{}'.format(sheet[1]['mapping_cols'])),
                                                        batch_id
-                                                       , eval('config.{}'.format(sheet[1]['mars_default_value'])))
+                                                       , eval('config.{}'.format(sheet[1]['default_value'])))
                         # if complete write to SQL process
                         if result:
                             sheet_status = [sheet[1]['sheet_name'], result, ""]
