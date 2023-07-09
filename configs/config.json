@@ -1,0 +1,82 @@
+{
+  "shipping_xlsx_cf": {
+    "sender_email_lsit": ["dennapa.nilpayak@ctibkk.com"],
+    "subject_key": "mars_",
+    "data_dir": "./data",
+    "source_dir": "./downloads",
+    "rcv_dir": "./rcv_xlsx",
+    "success_dir": "./rcv_xlsx/success",
+    "fail_dir": "./rcv_xlsx/fail",
+    "rcv_json_dir": "./rcv_xlsx/json",
+    "log_dir": "./logs",
+    "sheet_detail": {
+      "Update Plan": {
+        "sheet_name": "Update Plan",
+        "save_name": "update_plan",
+        "first_col_name": "Period",
+        "to_db": "LSP_Shipment",
+        "to_table": "rcv_customer_booking",
+        "mapping_cols": "update_plan_col_df",
+        "mars_default_value": "mars_booking_default_df"
+      },
+      "PF": {
+        "sheet_name": "PF",
+        "save_name": "proforma",
+        "first_col_name": "Sales Doc.",
+        "to_db": "LSP_Shipment",
+        "to_table": "rcv_customer_invoice",
+        "mapping_cols": "pf_col_df",
+        "mars_default_value": "mars_invoice_default_df"
+      }
+    }
+  },
+
+  "shipping_xlsx_Column": {
+    "update_plan_col_df": {
+      "origin_col_name": ["Mars Booking Number", "Booking Agent_no.", "Agent", "Vessel_Name", "FINAL ETD"
+                          , "ETA", "Port of Loading", "Country", "PORT", "Period", "Date"
+                          , "Date.1", "Shipment No.", "Plant", "TR No."
+                          , "ODN", "PO", "Sale Order no.", "Shipment", "Size", "Container no"
+                          , "SEAL NO.", "SI Cutt Off DateTime", "PF CASES", "PF NW"
+                          , "PF GW", "PF FOB", "Prof. Inv "],
+      "sql_col_name": ["booking_no", "agent_booking_no", "agent_name", "vessel_name", "final_etd"
+                      , "eta", "loading_port", "dest_country", "dischart_port", "period", "factory_loading_date"
+                      , "factory_loading_dayofweek", "factory_loading_item_no", "factory_plant_loc", "remark_shipment"
+                      , "ref_doc_no", "po_no", "order_no", "ref_shipment_no", "container_size", "container_no"
+                      , "seal_no1", "si_cut_off_date", "total_package", "total_netw"
+                      , "total_grossw", "total_price", "ref_prof_invoice"]
+    },
+    "pf_col_df": {
+      "origin_col_name": ["Bill.Doc.", "Created On", "Sales Doc.", "DCOr", "Item", "ItCa", "Material"
+                          , "Description", "Di", "Plnt", "Billed Quantity", "SU", "Net weight", "Gross weight"
+                          , "WUn", "Volume", "VUn", "ExRateStat", "Pricing Dt", "Net value", "Gross value", "Ref. Doc."
+                          , "Contract Type", "Required quantity", "Denominator"],
+      "sql_col_name": ["proforma_inv", "proforma_inv_date", "order_no", "purchase_country", "item_no", "product_group", "product_raw_code"
+                      , "product_description_en", "division_code", "factory_code", "qty", "uom", "net_weight", "gross_weight"
+                      , "weight_unit", "volume", "volume_unit", "exchange_rate", "pricing_date", "price", "amount", "define03"
+                      , "define04", "define05", "define06"]
+    }
+  },
+
+  "shipping_xlsx_MarsDefault": {
+    "mars_booking_default_df": {
+      "sql_col_name": ["shipment_type", "transportation_mode", "customer_code", "taxno", "dept_country"],
+      "default_value": ["EX", "S", "MARS_2013", "0105541000784", "TH"]
+    },
+    "mars_invoice_default_df": {
+      "sql_col_name": ["seller_code", "seller_name", "taxno", "branch_no", "term_of_payment", "origin_country"],
+      "default_value": ["MARS_2013", "MARS PETCARE  (THAILAND) CO.,LTD.", "0105541000784", "0001", "0", "TH"]
+    }
+  },
+  
+  "LSP_Shipping_SqlDb": {
+    "dialect": "mssql+pyodbc",
+    "sql_username": "stepdev",
+    "sql_password": "Step!2023",
+    "sql_host": "172.25.7.200",
+    "sql_database_name": "LSP_Integration",
+    "sql_driver": "ODBC+Driver+17+for+SQL+Server",
+    "sql_table_list": ["rcv_customer_booking", "rcv_customer_invoice"]
+  }
+
+}
