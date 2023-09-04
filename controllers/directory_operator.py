@@ -1,6 +1,8 @@
 import os
 import json
 import shutil
+import datetime
+import zlib
 import logger as log
 
 
@@ -13,9 +15,9 @@ def move_file(file_name, source_dir, destination_dir):
         # Move file
         shutil.move(origin, target)
 
-        log.write_log('Move file {} to {} Done'.format(file_name, destination_dir))
+        log.write_log('[INFO] Complete moving file {} to {}'.format(file_name, destination_dir))
     except Exception as e:
-        log.write_log('Move file {} to {}: ERROR {}'.format(file_name, destination_dir, e.args[0]))
+        log.write_log('[ERROR] Can NOT move file {} to {}: {}'.format(file_name, destination_dir, e.args[0]))
 
 
 def dir_check(receive_dir):
@@ -30,7 +32,7 @@ def dir_check(receive_dir):
         return True
 
     except Exception as e:
-        log.write_log('Directory_check: {}'.format(e.args[0]))
+        log.write_log('[ERROR] Directory check: {}'.format(e.args[0]))
         # If there is NO .pdf file return empty list
         return False
 
@@ -66,11 +68,28 @@ def dir_list(data_dir, rcv_json_dir):
             # move json file after retrieve data
             move_file(file_name, data_dir, rcv_json_dir)
 
-        log.write_log('Listing_file_process: Done')
+        log.write_log('[INFO] Listing all excel file in mailbox')
 
         # Response result
         return xlsx_list
 
     except Exception as e:
-        log.write_log('Listing_file_process: {}'.format(e.args[0]))
+        log.write_log('[ERROR] Can NOT listing file process: {}'.format(e.args[0]))
         return []
+
+def encode_log(log_dir, excel_file):
+    try:
+        # read excel log file
+        today = datetime.date.today().strftime('%Y-%m-%d')
+        file_fullname = os.path.join(log_dir, today, "{}_{}.log".format(today, excel_file.split('.')[0]))
+        with open(file_fullname, 'r') as file:
+            text_log = file.read()
+
+        encode_text = text_log.encode('utf-8')
+        return encode_text
+
+    except Exception as e:
+        # Can NOT compress log file
+        log.write_log('[ERROR] Can NOT compress log file: {}'.format(e.args[0]))
+        text = ''
+        return text
