@@ -1,7 +1,7 @@
 {
   "shipping_xlsx_cf": {
-    "sender_email_lsit": ["demo@demo.com"],
-    "subject_key": "test_subject",
+    "sender_email_lsit": ["dennapa.nilpayak@ctibkk.com"],
+    "subject_key": "mars_",
     "data_dir": "./data",
     "source_dir": "./downloads",
     "rcv_dir": "./rcv_xlsx",
@@ -58,25 +58,25 @@
     }
   },
 
-  "shipping_xlsx_Default": {
-    "booking_default_df": {
+  "shipping_xlsx_MarsDefault": {
+    "mars_booking_default_df": {
       "sql_col_name": ["shipment_type", "transportation_mode", "customer_code", "taxno", "dept_country"],
-      "default_value": ["EX", "S", "code", "00000000", "TH"]
+      "default_value": ["EX", "S", "MARS_2013", "0105541000784", "TH"]
     },
-    "invoice_default_df": {
+    "mars_invoice_default_df": {
       "sql_col_name": ["seller_code", "seller_name", "taxno", "branch_no", "term_of_payment", "origin_country"],
-      "default_value": ["code", "name", "0000000", "0001", "0", "TH"]
+      "default_value": ["MARS_2013", "MARS PETCARE  (THAILAND) CO.,LTD.", "0105541000784", "0001", "0", "TH"]
     }
   },
   
   "LSP_Shipping_SqlDb": {
     "dialect": "mssql+pyodbc",
-    "sql_username": "username",
-    "sql_password": "password",
-    "sql_host": "host_ip",
-    "sql_database_name": "DB_name",
+    "sql_username": "stepdev",
+    "sql_password": "Step!2023",
+    "sql_host": "172.25.7.200",
+    "sql_database_name": "LSP_Integration",
     "sql_driver": "ODBC+Driver+17+for+SQL+Server",
-    "sql_table_list": ["table_1", "table_2"]
+    "sql_table_list": ["rcv_customer_booking", "rcv_customer_invoice"]
   }
 
 }
