@@ -6,3 +6,4 @@ SQLAlchemy
 uuid
 fnmatch2
 pytest-shutil
+zlib
