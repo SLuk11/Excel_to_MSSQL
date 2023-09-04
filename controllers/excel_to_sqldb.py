@@ -7,10 +7,10 @@ import logger as log
 
 
 ## read function: read excel data then convert to dataframe
-def df_read(source_dir, excel_name, sheet, first_col_name):
+def df_read(source_dir, excel_file, sheet, first_col_name):
     try:
         colhead_row_id = 0
-        path = "{}/{}".format(source_dir, excel_name)
+        path = "{}/{}".format(source_dir, excel_file)
 
         # read Excel file
         df = pd.read_excel(path, sheet_name=sheet)
@@ -28,17 +28,17 @@ def df_read(source_dir, excel_name, sheet, first_col_name):
             # skip rows before table header
             df = df.iloc[colhead_row_id + 1:]
 
-        log.write_log('{}_sheet_{} Reading process: Done'.format(excel_name, sheet))
+        log.write_excel_log(excel_file, '[INFO] Complete scanning Excel sheet {}'.format(sheet))
 
         # Response result
         return df
     except Exception as e:
-        log.write_log('{}_sheet_{} Reading process: {}'.format(excel_name, sheet, e.args[0]))
+        log.write_excel_log(excel_file, '[ERROR] Can NOT scanning Excel sheet {}: {}'.format(sheet, e.args[0]))
         return []
 
 
 ## cleaning function: prepare data before convert to JSON format
-def df_clean(df, sheet_name):
+def df_clean(df, sheet_name, excel_file):
     try:
         ## check table header have duplicate name or not
         cols = pd.Series(df.columns)
@@ -95,13 +95,13 @@ def df_clean(df, sheet_name):
                 df_clean['Pricing Dt'] = pd.to_datetime(df_clean['Pricing Dt'], dayfirst=True).astype(str)
                 df_clean['Created On'] = pd.to_datetime(df_clean['Created On'], dayfirst=True).astype(str)
 
-        log.write_log('sheet_{} Cleaning process: Done'.format(sheet_name))
+        log.write_excel_log(excel_file, '[INFO] Complete cleaning process sheet {}'.format(sheet_name))
 
         # Response result
         return df_clean
 
     except Exception as e:
-        log.write_log('sheet_{} Cleaning process: {}'.format(sheet_name, e.args[0]))
+        log.write_excel_log(excel_file, '[ERROR] Can NOT cleaning sheet {}: {}'.format(sheet_name, e.args[0]))
         return []
 
 
@@ -109,28 +109,29 @@ def create_batch_id():
     return uuid.uuid4()
 
 
-def write2batch_table(conn_str, batch_id, excel_file, complete_status, err_msg = ""):
+def write2batch_table(conn_str, batch_id, excel_file, complete_status, err_msg = "", compress_text = ""):
     # collect batch transaction
     try:
         if complete_status == 1:
             batch_col = {'message_type': 'receive', 'batch_no': [batch_id], 'excel_file': [excel_file]
-                , 'is_complete': 1}
+                , 'is_complete': 1, 'log_file': compress_text}
         else:
             batch_col = {'message_type': 'receive', 'batch_no': [batch_id], 'excel_file': [excel_file]
-                , 'is_complete': 0, 'remark': "{}".format(err_msg)}
+                , 'is_complete': 0, 'remark': "{}".format(err_msg), 'log_file': compress_text}
         batch_df = pd.DataFrame(batch_col)
         engine = sqlalchemy.create_engine(conn_str)
-        batch_df.to_sql('rcv_customer_batch', engine, if_exists='append', index=False)
+        batch_df.to_sql('rcv_customer_batch_test', engine, if_exists='append', index=False, dtype={'log_file': sqlalchemy.LargeBinary})
 
+        log.write_excel_log(excel_file, '[INFO] Complete writing data of batch {}'.format(batch_id))
         return True
 
     except Exception as e:
-        log.write_log('Write to batch table {}'.format(e.args[0]))
+        log.write_excel_log(excel_file, '[ERROR] Can NOT writing data of batch {}: {}'.format(batch_id, e.args[0]))
 
         return False
 
 
-def write2sql(connection_string, table_name, df, col_df, batch_id, mars_default_value_df):
+def write2sql(connection_string, table_name, df, col_df, batch_id, mars_default_value_df, excel_file):
     try:
         # Filter only target column
         df_filter = df[col_df['origin_col_name'].values.tolist()]
@@ -148,17 +149,17 @@ def write2sql(connection_string, table_name, df, col_df, batch_id, mars_default_
         df_filter.to_sql(table_name, engine, if_exists='append', index=False)
         # Dispose of the engine
         engine.dispose()
-        log.write_log('SQL_{}_table Insert to SQL process: Done'.format(table_name))
+        log.write_excel_log(excel_file, '[INFO] Complete inserting data to SQL {} table'.format(table_name))
 
         return True
 
     except Exception as e:
-        log.write_log('SQL_{}_table Insert to SQL process: {}'.format(table_name, e.args[0]))
+        log.write_excel_log(excel_file, '[ERROR] Can NOT inserting data to SQL {} table: {}'.format(table_name, e.args[0]))
         return False
 
 
 ## Delete all inserted row in tabl_list that contain specific batch_id value
-def del_sql_row_bybatch(connection_string, table_list, batch_id):
+def del_sql_row_bybatch(connection_string, table_list, batch_id, excel_file):
     try:
         engine = sqlalchemy.create_engine(connection_string)
         connection = engine.connect()
@@ -171,6 +172,8 @@ def del_sql_row_bybatch(connection_string, table_list, batch_id):
             connection.execute(stmt)
             connection.commit()
 
-        log.write_log('Batch_no_{} Delete row process: Done'.format(batch_id))
+        log.write_log('[INFO] Rolling back all data of batch {}'.format(batch_id))
+        log.write_excel_log(excel_file, '[INFO] Rolling back all data of batch {}'.format(batch_id))
     except Exception as e:
-        log.write_log('Batch_no_{} Delete row process: {}'.format(batch_id, e.args[0]))
+        log.write_log('[ERROR] Can NOT rolling back all data of batch {}: {}'.format(batch_id, e.args[0]))
+        log.write_excel_log(excel_file, '[ERROR] Can NOT rolling back all data of batch {}: {}'.format(batch_id, e.args[0]))
